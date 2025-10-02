@@ -1,0 +1,14 @@
+D:\startup\EmployeeSystem\EmployeeImportSystem.Data\bin\Debug\net9.0\EmployeeImportSystem.Data.deps.json
+D:\startup\EmployeeSystem\EmployeeImportSystem.Data\bin\Debug\net9.0\EmployeeImportSystem.Data.runtimeconfig.json
+D:\startup\EmployeeSystem\EmployeeImportSystem.Data\bin\Debug\net9.0\EmployeeImportSystem.Data.dll
+D:\startup\EmployeeSystem\EmployeeImportSystem.Data\bin\Debug\net9.0\EmployeeImportSystem.Data.pdb
+D:\startup\EmployeeSystem\EmployeeImportSystem.Data\obj\Debug\net9.0\EmployeeImportSystem.Data.csproj.AssemblyReference.cache
+D:\startup\EmployeeSystem\EmployeeImportSystem.Data\obj\Debug\net9.0\EmployeeImportSystem.Data.GeneratedMSBuildEditorConfig.editorconfig
+D:\startup\EmployeeSystem\EmployeeImportSystem.Data\obj\Debug\net9.0\EmployeeImportSystem.Data.AssemblyInfoInputs.cache
+D:\startup\EmployeeSystem\EmployeeImportSystem.Data\obj\Debug\net9.0\EmployeeImportSystem.Data.AssemblyInfo.cs
+D:\startup\EmployeeSystem\EmployeeImportSystem.Data\obj\Debug\net9.0\EmployeeImportSystem.Data.csproj.CoreCompileInputs.cache
+D:\startup\EmployeeSystem\EmployeeImportSystem.Data\obj\Debug\net9.0\EmployeeImportSystem.Data.dll
+D:\startup\EmployeeSystem\EmployeeImportSystem.Data\obj\Debug\net9.0\refint\EmployeeImportSystem.Data.dll
+D:\startup\EmployeeSystem\EmployeeImportSystem.Data\obj\Debug\net9.0\EmployeeImportSystem.Data.pdb
+D:\startup\EmployeeSystem\EmployeeImportSystem.Data\obj\Debug\net9.0\EmployeeImportSystem.Data.genruntimeconfig.cache
+D:\startup\EmployeeSystem\EmployeeImportSystem.Data\obj\Debug\net9.0\ref\EmployeeImportSystem.Data.dll

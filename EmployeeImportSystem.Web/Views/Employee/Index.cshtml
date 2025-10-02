@@ -1,0 +1,358 @@
+@model List<EmployeeImportSystem.Web.Models.EmployeeViewModel>
+
+@{
+    ViewData["Title"] = "Employee Import System";
+}
+
+<!-- Page Header -->
+<div class="container-fluid mt-4">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-4">
+                <i class="fas fa-users"></i> Employee Import System
+            </h1>
+            <p class="lead text-muted">Import and manage employee records from CSV files</p>
+        </div>
+    </div>
+
+    <!-- Alert Messages Section -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle"></i> <strong>Success!</strong> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle"></i> <strong>Error!</strong> @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["WarningMessage"] != null)
+    {
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle"></i> <strong>Warning!</strong> @TempData["WarningMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- Import Errors Details -->
+    @if (TempData["ImportResult"] != null)
+    {
+        var resultJson = TempData["ImportResult"].ToString();
+        var result = Newtonsoft.Json.JsonConvert.DeserializeObject<EmployeeImportSystem.Web.Models.CsvImportResult>(resultJson);
+        
+        if (result.HasErrors)
+        {
+            <div class="alert alert-danger" role="alert">
+                <h5 class="alert-heading">
+                    <i class="fas fa-times-circle"></i> Import Errors (@result.Errors.Count)
+                </h5>
+                <hr>
+                <div style="max-height: 300px; overflow-y: auto;">
+                    <ul class="mb-0">
+                        @foreach (var error in result.Errors)
+                        {
+                            <li>@error</li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        }
+
+        if (result.HasWarnings)
+        {
+            <div class="alert alert-warning" role="alert">
+                <h5 class="alert-heading">
+                    <i class="fas fa-exclamation-triangle"></i> Warnings (@result.Warnings.Count)
+                </h5>
+                <hr>
+                <ul class="mb-0">
+                    @foreach (var warning in result.Warnings)
+                    {
+                        <li>@warning</li>
+                    }
+                </ul>
+            </div>
+        }
+    }
+
+    <!-- CSV Import Section -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">
+                <i class="fas fa-file-upload"></i> Import Employees from CSV
+            </h5>
+        </div>
+        <div class="card-body">
+            <form asp-action="Import" asp-controller="Employee" method="post" enctype="multipart/form-data" id="importForm">
+                <div class="row align-items-end">
+                    <div class="col-md-8">
+                        <label for="csvFile" class="form-label">
+                            <i class="fas fa-file-csv"></i> Select CSV File
+                        </label>
+                        <input type="file" 
+                               class="form-control" 
+                               id="csvFile" 
+                               name="csvFile" 
+                               accept=".csv"
+                               required>
+                        <div class="form-text">
+                            <i class="fas fa-info-circle"></i> 
+                            Maximum file size: 10 MB. Only CSV files are accepted.
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <button type="submit" class="btn btn-primary btn-lg w-100" id="importBtn">
+                            <i class="fas fa-upload"></i> Import Employees
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Import Progress Indicator -->
+            <div id="importProgress" class="mt-3" style="display: none;">
+                <div class="d-flex align-items-center">
+                    <div class="spinner-border text-primary me-3" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <div>
+                        <strong>Importing employees...</strong>
+                        <p class="text-muted mb-0">Please wait while we process your file.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Employee List Section -->
+    <div class="card shadow-sm">
+        <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="fas fa-table"></i> Employee Records
+            </h5>
+            <span class="badge bg-light text-dark" id="recordCount">
+                @Model.Count Record(s)
+            </span>
+        </div>
+        <div class="card-body">
+            <!-- DataTable Container -->
+            <div class="table-responsive">
+                <table id="employeeTable" class="table table-striped table-hover" style="width:100%">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Payroll Number</th>
+                            <th>Forenames</th>
+                            <th>Surname</th>
+                            <th>Date of Birth</th>
+                            <th>Email</th>
+                            <th>Telephone</th>
+                            <th>Mobile</th>
+                            <th>Postcode</th>
+                            <th>Start Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var employee in Model)
+                        {
+                            <tr>
+                                <td>@employee.PayrollNumber</td>
+                                <td>@employee.Forenames</td>
+                                <td>@employee.Surname</td>
+                                <td>@employee.DateOfBirth.ToString("dd/MM/yyyy")</td>
+                                <td>@employee.EmailHome</td>
+                                <td>@(employee.Telephone ?? "-")</td>
+                                <td>@(employee.Mobile ?? "-")</td>
+                                <td>@employee.Postcode</td>
+                                <td>@employee.StartDate.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    <button class="btn btn-sm btn-info" onclick="viewEmployee(@employee.Id)">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-warning" onclick="editEmployee(@employee.Id)">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteEmployee(@employee.Id)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Employee Details Modal -->
+<div class="modal fade" id="employeeModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-info text-white">
+                <h5 class="modal-title" id="employeeModalLabel">
+                    <i class="fas fa-user"></i> Employee Details
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="employeeModalBody">
+                <div class="text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.bootstrap5.min.css">
+    
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.bootstrap5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var table = $('#employeeTable').DataTable({
+                order: [[2, 'asc']], // Sort by surname (column 2) ascending
+                pageLength: 25,
+                lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+                
+                responsive: true,
+                
+                dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
+                     '<"row"<"col-sm-12"B>>' +
+                     '<"row"<"col-sm-12"tr>>' +
+                     '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                
+                buttons: [
+                    {
+                        extend: 'copy',
+                        className: 'btn btn-secondary btn-sm'
+                    },
+                    {
+                        extend: 'csv',
+                        className: 'btn btn-secondary btn-sm'
+                    },
+                    {
+                        extend: 'excel',
+                        className: 'btn btn-secondary btn-sm'
+                    },
+                    {
+                        extend: 'pdf',
+                        className: 'btn btn-secondary btn-sm'
+                    },
+                    {
+                        extend: 'print',
+                        className: 'btn btn-secondary btn-sm'
+                    }
+                ],
+                
+                language: {
+                    search: "Search employees:",
+                    lengthMenu: "Show _MENU_ employees per page",
+                    info: "Showing _START_ to _END_ of _TOTAL_ employees",
+                    infoEmpty: "No employees found",
+                    infoFiltered: "(filtered from _MAX_ total employees)",
+                    zeroRecords: "No matching employees found",
+                    emptyTable: "No employee data available. Import a CSV file to get started."
+                }
+            });
+
+            $('#importForm').on('submit', function () {
+                $('#importBtn').prop('disabled', true);
+                $('#importProgress').show();
+            });
+
+            table.on('search.dt', function () {
+                var info = table.page.info();
+                $('#recordCount').text(info.recordsDisplay + ' Record(s)');
+            });
+        });
+
+        function viewEmployee(id) {
+            $('#employeeModal').modal('show');
+            
+            $.ajax({
+                url: '@Url.Action("Details", "Employee")/' + id,
+                type: 'GET',
+                success: function (data) {
+                    var html = `
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Payroll Number:</strong> ${data.payrollNumber}</p>
+                                <p><strong>Full Name:</strong> ${data.forenames} ${data.surname}</p>
+                                <p><strong>Date of Birth:</strong> ${formatDate(data.dateOfBirth)}</p>
+                                <p><strong>Age:</strong> ${data.age} years</p>
+                                <p><strong>Email:</strong> <a href="mailto:${data.emailHome}">${data.emailHome}</a></p>
+                            </div>
+                            <div class="col-<div class="col-md-6">
+                                <p><strong>Telephone:</strong> ${data.telephone || 'N/A'}</p>
+                                <p><strong>Mobile:</strong> ${data.mobile || 'N/A'}</p>
+                                <p><strong>Address:</strong> ${data.address}</p>
+                                <p><strong>City/Town:</strong> ${data.address2 || 'N/A'}</p>
+                                <p><strong>Postcode:</strong> ${data.postcode}</p>
+                                <p><strong>Start Date:</strong> ${formatDate(data.startDate)}</p>
+                                <p><strong>Years of Service:</strong> ${data.yearsOfService} years</p>
+                            </div>
+                        </div>
+                    `;
+                    $('#employeeModalBody').html(html);
+                },
+                error: function () {
+                    $('#employeeModalBody').html('<div class="alert alert-danger">Error loading employee details.</div>');
+                }
+            });
+        }
+
+        function editEmployee(id) {
+            alert('Edit functionality would open an edit form for employee ID: ' + id);
+        }
+
+        // Delete employee
+        function deleteEmployee(id) {
+            if (confirm('Are you sure you want to delete this employee?')) {
+                $.ajax({
+                    url: '@Url.Action("Delete", "Employee")/' + id,
+                    type: 'POST',
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            alert(response.message);
+                            location.reload(); // Reload page to refresh grid
+                        } else {
+                            alert('Error: ' + response.error);
+                        }
+                    },
+                    error: function () {
+                        alert('An error occurred while deleting the employee.');
+                    }
+                });
+            }
+        }
+
+        function formatDate(dateString) {
+            var date = new Date(dateString);
+            var day = String(date.getDate()).padStart(2, '0');
+            var month = String(date.getMonth() + 1).padStart(2, '0');
+            var year = date.getFullYear();
+            return day + '/' + month + '/' + year;
+        }
+    </script>
+}

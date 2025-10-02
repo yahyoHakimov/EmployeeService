@@ -1,0 +1,174 @@
+/* Custom Styles for Employee Import System */
+
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  white-space: nowrap;
+  line-height: 60px;
+}
+
+/* Card styling */
+.card {
+  border-radius: 8px;
+  border: none;
+}
+
+.card-header {
+  border-radius: 8px 8px 0 0 !important;
+  font-weight: 600;
+}
+
+/* Button styling */
+.btn {
+  border-radius: 5px;
+  font-weight: 500;
+}
+
+/* DataTables custom styling */
+.dataTables_wrapper .dataTables_filter input {
+  border: 1px solid #ced4da;
+  border-radius: 5px;
+  padding: 5px 10px;
+}
+
+.dataTables_wrapper .dataTables_length select {
+  border: 1px solid #ced4da;
+  border-radius: 5px;
+  padding: 5px 10px;
+}
+
+/* Table styling */
+#employeeTable {
+  font-size: 0.9rem;
+}
+
+#employeeTable thead th {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
+
+#employeeTable tbody tr:hover {
+  background-color: #f8f9fa;
+  cursor: pointer;
+}
+
+/* Alert styling */
+.alert {
+  border-radius: 8px;
+  border-left: 4px solid;
+}
+
+.alert-success {
+  border-left-color: #28a745;
+}
+
+.alert-danger {
+  border-left-color: #dc3545;
+}
+
+.alert-warning {
+  border-left-color: #ffc107;
+}
+
+.alert-info {
+  border-left-color: #17a2b8;
+}
+
+/* File input styling */
+.form-control[type="file"] {
+  cursor: pointer;
+}
+
+.form-control[type="file"]::-webkit-file-upload-button {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+.form-control[type="file"]::-webkit-file-upload-button:hover {
+  background-color: #5a6268;
+}
+
+/* Modal styling */
+.modal-content {
+  border-radius: 10px;
+  border: none;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.modal-header {
+  border-radius: 10px 10px 0 0;
+  border-bottom: none;
+  padding: 20px;
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+/* Progress indicator */
+#importProgress {
+  padding: 15px;
+  background-color: #e7f3ff;
+  border-left: 4px solid #0d6efd;
+  border-radius: 5px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .display-4 {
+    font-size: 2rem;
+  }
+  
+  #employeeTable {
+    font-size: 0.8rem;
+  }
+  
+  .btn-sm {
+    font-size: 0.7rem;
+    padding: 2px 5px;
+  }
+}
+
+/* Loading spinner center alignment */
+.spinner-border {
+  vertical-align: middle;
+}
+
+/* Badge styling */
+.badge {
+  font-weight: 500;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+}
+
+/* DataTables export buttons */
+.dt-buttons {
+  margin-bottom: 15px;
+}
+
+.dt-button {
+  margin-right: 5px;
+  margin-bottom: 5px;
+}
