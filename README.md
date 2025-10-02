@@ -7,7 +7,7 @@ CSV import application with ASP.NET Core MVC and SQL Server.
 ```bash
 # Clone
 git clone https://github.com/yahyoHakimov/EmployeeService.git
-cd employee-import-system
+cd EmployeeService
 
 # Update connection string in EmployeeImportSystem.Web/appsettings.json
 
